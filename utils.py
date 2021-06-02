@@ -2,6 +2,10 @@ import pickle
 import base64
 import streamlit as st
 
+HIDE_DEFAULTS = (
+    "<style> #MainMenu {visibility: hidden;} footer {visibility: hidden;} </style>"
+)
+
 
 def serialize_model(trained_mod):
     serialized_model = pickle.dumps(trained_mod)

@@ -3,15 +3,16 @@ import streamlit as st
 from sklearn import model_selection
 from sklearn.metrics import accuracy_score
 from models import models
-from predict_new import make_new_preds
-from utils import serialize_model
+
+# from predict_new import make_new_preds
+from utils import serialize_model, HIDE_DEFAULTS
 
 random_state = 42
 
 
 def main():
     st.set_page_config("Auto ML", "assets/favicon.ico", layout="wide")
-
+    st.markdown(HIDE_DEFAULTS, unsafe_allow_html=True)
     st.title("Automated Machine Learning CSIS 4495")
     st.subheader("Zito Relova 300306471")
 
