@@ -10,7 +10,8 @@ random_state = 42
 
 
 def main():
-    st.set_page_config(layout="wide")
+    st.set_page_config("Auto ML", "assets/favicon.ico", layout="wide")
+
     st.title("Automated Machine Learning CSIS 4495")
     st.subheader("Zito Relova 300306471")
 
