@@ -27,6 +27,9 @@ class ModelBuilder(Section):
         y = st.selectbox("Select the target variable: ", cols)
 
         if y:
+            self.objective = (
+                "number" if pd.api.types.is_numeric_dtype(self.df[y]) else "category"
+            )
             features_container = st.beta_container()
             select_all = st.checkbox("Select all")
             feats_list = cols.copy()
@@ -47,10 +50,16 @@ class ModelBuilder(Section):
         #             "Select your models: ", list(models.keys())
         #         )
         #     else:
-        chosen_model = st.selectbox("Select your model: ", list(models.keys()))
+        available_models = models[self.objective]
+        chosen_model = st.selectbox(
+            "Select your model: ", list(available_models.keys())
+        )
 
         st.subheader("Metric Selection")
-        chosen_metric = st.selectbox("Select your metric", list(metrics.keys()))
+        available_metrics = metrics[self.objective]
+        chosen_metric = st.selectbox(
+            "Select your metric", list(available_metrics.keys())
+        )
 
         if st.button("Train Model") or self.state.train_model:
             self.state.train_model = True
@@ -60,11 +69,11 @@ class ModelBuilder(Section):
             X_train, X_test, y_train, y_test = model_selection.train_test_split(
                 feats, self.df[y], random_state=constants.RANDOM_STATE
             )
-            trained_model = models[chosen_model].fit(X_train, y_train)
+            trained_model = available_models[chosen_model].fit(X_train, y_train)
             self.trained_model = trained_model
 
             pred = self.trained_model.predict(X_test)
-            metric = metrics[chosen_metric]
+            metric = available_metrics[chosen_metric]
             metric_score = metric[0](y_test, pred, **metric[1])
             st.write(
                 f"Your chosen model {chosen_model}, scored {metric_score:.2f} on {X_test.shape[0]} test cases."
@@ -105,7 +114,6 @@ class ModelBuilder(Section):
                     f"<h3>The model predicted <strong>{pred[0]}</strong>.</h3>"
                 )
                 st.markdown(pred_string, unsafe_allow_html=True)
-                # st.subheader(f"The model predicted {pred[0]}")
 
         except Exception as ex:
             st.write("There was an error creating the prediction interface")
