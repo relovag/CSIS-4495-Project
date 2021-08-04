@@ -5,14 +5,13 @@ import explore_data
 
 
 def main():
-    st.set_page_config("Auto ML", "assets/favicon.ico")
+    st.set_page_config(*constants.PAGE_CONFIG)
     st.markdown(constants.HIDE_DEFAULTS, unsafe_allow_html=True)
-    st.title("Automated Machine Learning CSIS 4495")
-    st.subheader("Zito Relova 300306471")
+    st.title(constants.APPLICATION_TITLE)
+    st.subheader(constants.APPLICATION_SUBHEADER)
 
-    activities = ["EDA", "Model Building"]
     file = st.file_uploader("Upload Dataset", type=["csv", "txt"])
-    choice = st.sidebar.selectbox("Select Activity", activities, 1)
+    choice = st.sidebar.selectbox("Select Activity", constants.ACTIVITIES, 1)
 
     if file:
         if choice == "Model Building":
