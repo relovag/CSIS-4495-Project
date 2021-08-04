@@ -7,7 +7,7 @@ import tests as tm
 
 @pytest.fixture(scope="session", autouse=True)
 def driver():
-    driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver")
+    driver = webdriver.Chrome()
     driver.get("http://localhost:8501")
     yield driver
     driver.close()
