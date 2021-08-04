@@ -13,7 +13,7 @@ class Section:
             st.write(f"Number of rows: {df.shape[0]}")
             st.write(f"Number of columns: {df.shape[1]}")
             st.write("Dataset summary")
-            st.dataframe(df.describe())
+            st.table(df.describe())
             self.df = df
 
         except Exception as ex:
