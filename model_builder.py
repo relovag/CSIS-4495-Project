@@ -41,19 +41,19 @@ class ModelBuilder(Section):
             chosen_feats = features_container.multiselect(*select_args)
 
         st.subheader("Model Selection")
-        # chosen_model = st.empty()
-        # compare_models = st.checkbox("Compare different models")
-
-        # with chosen_model:
-        #     if compare_models:
-        #         chosen_model = st.multiselect(
-        #             "Select your models: ", list(models.keys())
-        #         )
-        #     else:
+        chosen_model = st.empty()
+        compare_models = st.checkbox("Compare different models")
         available_models = models[self.objective]
-        chosen_model = st.selectbox(
-            "Select your model: ", list(available_models.keys())
-        )
+
+        with chosen_model:
+            if compare_models:
+                chosen_model = st.multiselect(
+                    "Select your models: ", list(available_models.keys())
+                )
+            else:
+                chosen_model = st.selectbox(
+                    "Select your model: ", list(available_models.keys())
+                )
 
         st.subheader("Metric Selection")
         available_metrics = metrics[self.objective]
@@ -69,14 +69,30 @@ class ModelBuilder(Section):
             X_train, X_test, y_train, y_test = model_selection.train_test_split(
                 feats, self.df[y], random_state=constants.RANDOM_STATE
             )
-            trained_model = available_models[chosen_model].fit(X_train, y_train)
-            self.trained_model = trained_model
+            if compare_models:
+                best = 0
+                best_model = None
+                best_model_name = None
+                for model in chosen_model:
+                    trained_model = available_models[model].fit(X_train, y_train)
+                    pred = trained_model.predict(X_test)
+                    metric = available_metrics[chosen_metric]
+                    metric_score = metric[0](y_test, pred, **metric[1])
+                    if metric_score > best:
+                        best = metric_score
+                        best_model = trained_model
+                        best_model_name = model
+                self.trained_model = best_model
+                chosen_model = best_model_name
+            else:
+                trained_model = available_models[chosen_model].fit(X_train, y_train)
+                self.trained_model = trained_model
 
-            pred = self.trained_model.predict(X_test)
-            metric = available_metrics[chosen_metric]
-            metric_score = metric[0](y_test, pred, **metric[1])
+                pred = self.trained_model.predict(X_test)
+                metric = available_metrics[chosen_metric]
+                metric_score = metric[0](y_test, pred, **metric[1])
             st.write(
-                f"Your chosen model {chosen_model}, scored {metric_score:.2f} on {X_test.shape[0]} test cases."
+                f"Your best model {chosen_model}, scored {metric_score:.2f} on {X_test.shape[0]} test cases."
             )
             st.subheader(f"Download your trained model")
 
