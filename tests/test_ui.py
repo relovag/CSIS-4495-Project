@@ -20,7 +20,7 @@ def driver():
 def test_upload(driver):
     driver.implicitly_wait(5)
     file_upload = driver.find_element_by_xpath("//input[@type='file']")
-    file_upload.send_keys(f"{os.getcwd()}/tests/iris.csv")
+    file_upload.send_keys(f"{os.getcwd()}/tests/test_files/iris.csv")
     driver.implicitly_wait(5)
 
 
@@ -39,11 +39,16 @@ def test_num_columns(driver):
 
 
 def test_dataset_summary(driver):
+    assert driver.find_element_by_xpath("//*[contains(text(), 'Dataset summary')]")
+
+
+def test_dataframe_consistency(driver):
     table_element = driver.find_element_by_xpath(
         '//*[@id="root"]/div[1]/div/div/div/div/section[2]/div/div[1]/div[8]/div/div'
     )
     html = table_element.get_attribute("innerHTML")
     df = pd.read_html(html, header=0)[0]
+    ref_df = pd.read_csv(tm.iris["summary_ref"])
 
-    assert driver.find_element_by_xpath("//*[contains(text(), 'Dataset summary')]")
     assert all([col in df.columns for col in tm.iris["col_names"]])
+    assert ref_df.equals(df)
