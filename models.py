@@ -6,7 +6,7 @@ models = {
     "category": {
         "Logistic Regression": LogisticRegression(),
         "K-Nearest Neighbors": KNeighborsClassifier(),
-        "Deecision Tree Classifier": DecisionTreeClassifier(),
+        "Decision Tree Classifier": DecisionTreeClassifier(),
     },
     "number": {
         "Linear Regression": LinearRegression(),
